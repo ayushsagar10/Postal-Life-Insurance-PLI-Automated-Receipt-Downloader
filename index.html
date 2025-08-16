@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLI Receipt Downloader & Renamer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: "Calm Harmony" - A palette of warm neutrals (bg-stone-50), dark text (text-slate-800), and a subtle teal accent (teal-600) for a professional and trustworthy feel. -->
+    <!-- Application Structure Plan: The application is structured as a single-page narrative, guiding the user from a high-level summary to detailed explanations. It starts with a hero section for immediate understanding, followed by an interactive "How It Works" flowchart to visualize the process. Subsequent sections detail Features, Security, and Get Started instructions using interactive elements like accordions and tabs. This structure was chosen to logically break down information, making it easy to digest and building user confidence before they download the tool. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Tool Workflow -> Goal: Explain Process -> Viz/Presentation: Interactive HTML/CSS Flowchart -> Interaction: User clicks through steps, highlighting the current step and updating descriptive text. Justification: More engaging and clearer than a static list. Method: Vanilla JS + Tailwind CSS.
+        - Report Info: Security Features -> Goal: Build Trust -> Viz/Presentation: Accordion Component -> Interaction: User clicks to expand and read details on each security measure. Justification: Hides complexity while keeping key points scannable. Method: Vanilla JS + Tailwind CSS.
+        - Report Info: Download Options -> Goal: Instruct User -> Viz/Presentation: Direct Download Section -> Interaction: User clicks a prominent button to download the app. Justification: Clear call-to-action for distribution. Method: HTML link.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Tailwind bg-slate-50 */
+        }
+        .flowchart-step.active {
+            background-color: #0d9488; /* Tailwind teal-600 */
+            color: white;
+            transform: scale(1.05);
+        }
+        .flowchart-step.active .step-number {
+            background-color: white;
+            color: #0d9488; /* Tailwind teal-600 */
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .accordion-button.open .accordion-icon {
+            transform: rotate(180deg);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-slate-800">PLI Downloader & Renamer</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#how-it-works" class="text-slate-600 hover:text-teal-600 transition-colors">How It Works</a>
+                <a href="#features" class="text-slate-600 hover:text-teal-600 transition-colors">Features</a>
+                <a href="#security" class="text-slate-600 hover:text-teal-600 transition-colors">Security</a>
+                <a href="#get-started" class="text-slate-600 hover:text-teal-600 transition-colors">Download</a>
+            </div>
+            <a href="#get-started" class="bg-teal-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-teal-700 transition-colors">Download</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero" class="py-20 md:py-32 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-4xl md:text-6xl font-bold text-slate-900 leading-tight">Automate Your PLI Receipts</h2>
+                <p class="mt-4 text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">A simple, secure desktop application to automatically download and intelligently rename your Postal Life Insurance premium receipts. Save time and keep your records perfectly organized.</p>
+                <a href="#get-started" class="mt-8 inline-block bg-teal-600 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-teal-700 transition-transform hover:scale-105">Download Now</a>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold">A Simple, Guided Process</h3>
+                    <p class="mt-2 text-slate-600 max-w-2xl mx-auto">The application guides you through a straightforward workflow. You handle the secure login, and the tool takes care of the rest. Click through the steps below to see the process in action.</p>
+                </div>
+                <div class="chart-container">
+                    <div class="lg:grid lg:grid-cols-2 lg:gap-12 items-center">
+                        <div id="flowchart-visual" class="flex flex-col space-y-2 md:space-y-4 mb-8 lg:mb-0">
+                        </div>
+                        <div id="flowchart-details" class="bg-white p-8 rounded-xl shadow-lg min-h-[300px] flex flex-col justify-center">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold">Powerful Features, Simple Interface</h3>
+                    <p class="mt-2 text-slate-600 max-w-2xl mx-auto">Designed to be both powerful and easy to use, the application comes with features that make managing your receipts effortless.</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-slate-50 p-8 rounded-xl shadow-sm hover:shadow-lg transition-shadow">
+                        <span class="text-3xl">📅</span>
+                        <h4 class="font-bold text-xl mt-4 mb-2">Date Range Filtering</h4>
+                        <p class="text-slate-600">No need to download everything. Simply select a start and end date to get only the receipts you need from a specific period.</p>
+                    </div>
+                    <div class="bg-slate-50 p-8 rounded-xl shadow-sm hover:shadow-lg transition-shadow">
+                        <span class="text-3xl">🤖</span>
+                        <h4 class="font-bold text-xl mt-4 mb-2">Fully Automated Process</h4>
+                        <p class="text-slate-600">Once you start the process, the tool works automatically. It finds, downloads, and renames every receipt in your selected range without any further input.</p>
+                    </div>
+                    <div class="bg-slate-50 p-8 rounded-xl shadow-sm hover:shadow-lg transition-shadow">
+                        <span class="text-3xl">✍️</span>
+                        <h4 class="font-bold text-xl mt-4 mb-2">Intelligent Renaming</h4>
+                        <p class="text-slate-600">Each PDF is read to extract key details, renaming files to a clean, consistent format: `Amount_TransactionNumber_Date.pdf`.</p>
+                    </div>
+                    <div class="bg-slate-50 p-8 rounded-xl shadow-sm hover:shadow-lg transition-shadow">
+                        <span class="text-3xl">📊</span>
+                        <h4 class="font-bold text-xl mt-4 mb-2">Real-time Progress Log</h4>
+                        <p class="text-slate-600">A detailed status log shows you exactly what the application is doing at every step, so you're always informed of the progress.</p>
+                    </div>
+                    <div class="bg-slate-50 p-8 rounded-xl shadow-sm hover:shadow-lg transition-shadow">
+                        <span class="text-3xl">🔄</span>
+                        <h4 class="font-bold text-xl mt-4 mb-2">Simple Controls</h4>
+                        <p class="text-slate-600">Includes easy-to-use buttons to Reset the application state or Stop and Exit safely at any time, giving you full control.</p>
+                    </div>
+                    <div class="bg-slate-50 p-8 rounded-xl shadow-sm hover:shadow-lg transition-shadow">
+                        <span class="text-3xl">💻</span>
+                        <h4 class="font-bold text-xl mt-4 mb-2">Cross-Platform</h4>
+                        <p class="text-slate-600">The application is built with Python and can be run on Windows, macOS, and Linux, with executables provided for ease of use.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="security" class="py-20">
+            <div class="container mx-auto px-6 max-w-4xl">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold">Your Security is the Priority</h3>
+                    <p class="mt-2 text-slate-600 max-w-2xl mx-auto">The application was designed from the ground up to be a safe and trustworthy tool. Your sensitive information is never seen, stored, or handled by the software.</p>
+                </div>
+                <div id="accordion-container" class="space-y-4">
+                </div>
+            </div>
+        </section>
+
+        <section id="get-started" class="py-20 bg-white">
+            <div class="container mx-auto px-6 max-w-4xl text-center">
+                <h3 class="text-3xl font-bold">Ready to Get Started?</h3>
+                <p class="mt-2 text-slate-600 max-w-2xl mx-auto">Download the portable application for Windows. No installation required. (Requires Google Chrome).</p>
+                <a href=https://github.com/ayushsagar10/Postal-Life-Insurance-PLI-Automated-Receipt-Downloader/releases/tag/v1.0.0 class="mt-8 inline-block bg-teal-600 text-white px-10 py-5 rounded-lg font-bold text-xl hover:bg-teal-700 transition-transform hover:scale-105">
+                    Download for Windows
+                </a>
+                 <p class="mt-4 text-sm text-slate-500">For developers, the Python source code is available in the GitHub repository.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-slate-400 py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2025 PLI Downloader & Renamer. A tool for simplifying receipt management.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            const flowchartData = [
+                {
+                    title: '1. Launch & Navigate',
+                    description: 'Start the application and click "Launch Chrome". A new, controlled browser window opens. In that window, log in to the official PLI website and navigate to the "Payment History" page for your desired policy.'
+                },
+                {
+                    title: '2. Select Date Range',
+                    description: 'Once your receipts are visible in the browser, return to the desktop application. Use the simple calendar widgets to select the start and end dates for the receipts you wish to download.'
+                },
+                {
+                    title: '3. Download & Rename',
+                    description: 'Click the "Download & Rename Receipts" button. The application now takes over, automatically downloading each receipt in your selected range one by one. You can monitor the progress in the real-time status log.'
+                },
+                {
+                    title: '4. Process Complete',
+                    description: 'The application intelligently reads each downloaded PDF to find the amount, transaction number, and date. It then renames the files to a clean, organized format and saves them in a "receipts" folder on your computer.'
+                }
+            ];
+
+            const securityData = [
+                {
+                    title: '🛡️ Secure Login Process',
+                    content: 'You always log in directly on the official PLI website through the secure browser window. Your credentials are handled only by their official site, just as they would be in any normal browser session. The application never sees, intercepts, or interacts with your login details.'
+                },
+                {
+                    title: '🔒 No Information Stored',
+                    content: 'The application does not save your username, password, policy number, or any other personal details. Your sensitive information is never written to a file or stored in memory after the session, ensuring complete privacy.'
+                },
+                {
+                    title: '📁 Private and Local Storage',
+                    content: 'All downloaded receipts are saved directly to a folder on your own computer. Your files are never uploaded or stored anywhere online, giving you full control over your data at all times.'
+                }
+            ];
+
+            const flowchartVisual = document.getElementById('flowchart-visual');
+            const flowchartDetails = document.getElementById('flowchart-details');
+            let activeStep = 0;
+
+            function updateFlowchart(stepIndex) {
+                activeStep = stepIndex;
+                
+                document.querySelectorAll('.flowchart-step').forEach((step, index) => {
+                    if (index === activeStep) {
+                        step.classList.add('active');
+                    } else {
+                        step.classList.remove('active');
+                    }
+                });
+
+                const data = flowchartData[activeStep];
+                flowchartDetails.innerHTML = `
+                    <h4 class="text-2xl font-bold mb-3">${data.title}</h4>
+                    <p class="text-slate-600 text-lg">${data.description}</p>
+                `;
+            }
+
+            flowchartData.forEach((step, index) => {
+                const stepEl = document.createElement('div');
+                stepEl.className = 'flowchart-step flex items-center p-4 bg-white rounded-lg shadow-md cursor-pointer transition-all duration-300';
+                stepEl.innerHTML = `
+                    <span class="step-number flex-shrink-0 w-10 h-10 bg-teal-100 text-teal-700 font-bold rounded-full flex items-center justify-center mr-4 transition-colors">${index + 1}</span>
+                    <span class="font-semibold text-lg">${step.title}</span>
+                `;
+                stepEl.addEventListener('click', () => updateFlowchart(index));
+                
+                if(index < flowchartData.length - 1) {
+                    const arrow = document.createElement('div');
+                    arrow.className = 'h-8 w-px bg-slate-300 mx-auto';
+                    stepEl.appendChild(arrow);
+                }
+                
+                flowchartVisual.appendChild(stepEl);
+
+                if (index < flowchartData.length - 1) {
+                    const connector = document.createElement('div');
+                    connector.className = 'h-8 flex justify-center items-center';
+                    connector.innerHTML = `<div class="w-0.5 h-full bg-slate-300"></div>`;
+                    flowchartVisual.appendChild(connector);
+                }
+            });
+
+            updateFlowchart(0);
+
+            const accordionContainer = document.getElementById('accordion-container');
+            securityData.forEach(item => {
+                const accItem = document.createElement('div');
+                accItem.className = 'bg-white border border-slate-200 rounded-xl';
+                accItem.innerHTML = `
+                    <button class="accordion-button w-full flex justify-between items-center text-left p-6 font-semibold text-lg">
+                        <span>${item.title}</span>
+                        <span class="accordion-icon transition-transform duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </span>
+                    </button>
+                    <div class="accordion-content px-6">
+                        <p class="pb-6 text-slate-600">${item.content}</p>
+                    </div>
+                `;
+                accordionContainer.appendChild(accItem);
+            });
+
+            document.querySelectorAll('.accordion-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const content = button.nextElementSibling;
+                    button.classList.toggle('open');
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
